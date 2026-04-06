@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURA · Finance Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- ═══════════ BACKGROUND ═══════════ -->
+<div id="particles"></div>
+<div class="aurora"></div>
+
+<!-- ═══════════ APP ═══════════ -->
+<div class="app" id="app">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-gem">◈</span>
+        <span class="logo-text">AURA</span>
+      </div>
+    </div>
+
+    <span class="nav-section-label">Navigation</span>
+    <nav class="nav">
+      <div class="nav-item active" data-section="dashboard">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-item" data-section="transactions">
+        <span class="nav-icon">⇄</span>
+        <span class="nav-label">Transactions</span>
+      </div>
+      <div class="nav-item" data-section="insights">
+        <span class="nav-icon">◎</span>
+        <span class="nav-label">Insights</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="role-switcher">
+        <span class="role-label">Current Role</span>
+        <div class="role-buttons">
+          <button class="role-btn active" data-role="admin">Admin</button>
+          <button class="role-btn" data-role="viewer">Viewer</button>
+        </div>
+      </div>
+      <button class="theme-btn" id="themeBtn">🌙 Dark Mode</button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+
+    <!-- ──────── DASHBOARD ──────── -->
+    <section class="section active" id="section-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Financial Overview</h1>
+          <p class="page-subtitle">Track and understand your money flow</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-export" id="exportBtn">↓ Export CSV</button>
+          <button class="btn btn-primary admin-only" id="addBtn">＋ New Transaction</button>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stats-grid">
+        <div class="stat-card" style="--card-accent: #6366F1">
+          <span class="stat-icon">◈</span>
+          <span class="stat-label">Net Balance</span>
+          <h2 class="stat-value" id="balanceVal">$0</h2>
+          <span class="stat-change positive" id="savingsChip">0% saved</span>
+        </div>
+        <div class="stat-card" style="--card-accent: #10B981">
+          <span class="stat-icon">↑</span>
+          <span class="stat-label">Total Income</span>
+          <h2 class="stat-value" id="incomeVal">$0</h2>
+        </div>
+        <div class="stat-card" style="--card-accent: #F43F5E">
+          <span class="stat-icon">↓</span>
+          <span class="stat-label">Total Expenses</span>
+          <h2 class="stat-value" id="expenseVal">$0</h2>
+        </div>
+        <div class="stat-card" style="--card-accent: #F59E0B">
+          <span class="stat-icon">%</span>
+          <span class="stat-label">Savings Rate</span>
+          <h2 class="stat-value" id="savingsVal">0%</h2>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="card">
+          <h3 class="card-title">Balance Trend</h3>
+          <canvas id="lineChart"></canvas>
+        </div>
+        <div class="card">
+          <h3 class="card-title">Spending Breakdown</h3>
+          <canvas id="donutChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Quick Insights -->
+      <div class="quick-insights-grid">
+        <div class="insight-card">
+          <span class="insight-emoji">🔥</span>
+          <div>
+            <span class="insight-label">Top Spending</span>
+            <p class="insight-value" id="topCategory">Loading…</p>
+          </div>
+        </div>
+        <div class="insight-card">
+          <span class="insight-emoji">📊</span>
+          <div>
+            <span class="insight-label">vs Last Month</span>
+            <p class="insight-value" id="monthlyChange">Loading…</p>
+          </div>
+        </div>
+        <div class="insight-card">
+          <span class="insight-emoji">💡</span>
+          <div>
+            <span class="insight-label">Smart Tip</span>
+            <p class="insight-value" id="smartTip">Loading…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ──────── TRANSACTIONS ──────── -->
+    <section class="section" id="section-transactions">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Transactions</h1>
+          <p class="page-subtitle">Manage and explore your financial activity</p>
+        </div>
+        <button class="btn btn-primary admin-only" id="addBtn2">＋ New Transaction</button>
+      </div>
+
+      <div class="filters-bar">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍  Search transactions…" />
+        <select class="filter-select" id="typeFilter">
+          <option value="">All Types</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <select class="filter-select" id="categoryFilter">
+          <option value="">All Categories</option>
+        </select>
+        <select class="filter-select" id="sortBy">
+          <option value="date-desc">Newest First</option>
+          <option value="date-asc">Oldest First</option>
+          <option value="amount-desc">Highest Amount</option>
+          <option value="amount-asc">Lowest Amount</option>
+        </select>
+      </div>
+
+      <div class="card table-card">
+        <table class="transactions-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th class="admin-only">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="transactionsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ──────── INSIGHTS ──────── -->
+    <section class="section" id="section-insights">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Insights</h1>
+          <p class="page-subtitle">Deep dive into your financial patterns</p>
+        </div>
+      </div>
+
+      <div class="insights-detail-grid">
+        <div class="card">
+          <h3 class="card-title">Monthly Income vs Expenses</h3>
+          <canvas id="barChart"></canvas>
+        </div>
+        <div class="card">
+          <h3 class="card-title">Category Breakdown</h3>
+          <div id="categoryList"></div>
+        </div>
+      </div>
+
+      <div class="observations-grid" id="observationsGrid"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ═══════════ ADD MODAL ═══════════ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>New Transaction</h2>
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    </div>
+    <form id="transactionForm" autocomplete="off">
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" id="formDesc" required placeholder="e.g. Monthly Salary, Coffee…" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Amount ($)</label>
+          <input type="number" id="formAmount" required min="0.01" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="formType">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="formCategory">
+            <option value="Salary">💼 Salary</option>
+            <option value="Freelance">🖥️ Freelance</option>
+            <option value="Investments">📈 Investments</option>
+            <option value="Food & Dining">🍽️ Food &amp; Dining</option>
+            <option value="Housing">🏠 Housing</option>
+            <option value="Transportation">🚗 Transportation</option>
+            <option value="Entertainment">🎬 Entertainment</option>
+            <option value="Shopping">🛍️ Shopping</option>
+            <option value="Healthcare">🏥 Healthcare</option>
+            <option value="Utilities">⚡ Utilities</option>
+            <option value="Other">📋 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="formDate" required />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Save Transaction</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════ EDIT MODAL ═══════════ -->
+<div class="modal-overlay" id="editModalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Edit Transaction</h2>
+      <button class="modal-close" id="editModalClose" aria-label="Close">✕</button>
+    </div>
+    <form id="editTransactionForm" autocomplete="off">
+      <input type="hidden" id="editFormId" />
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" id="editFormDesc" required />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Amount ($)</label>
+          <input type="number" id="editFormAmount" required min="0.01" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="editFormType">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="editFormCategory">
+            <option value="Salary">💼 Salary</option>
+            <option value="Freelance">🖥️ Freelance</option>
+            <option value="Investments">📈 Investments</option>
+            <option value="Food & Dining">🍽️ Food &amp; Dining</option>
+            <option value="Housing">🏠 Housing</option>
+            <option value="Transportation">🚗 Transportation</option>
+            <option value="Entertainment">🎬 Entertainment</option>
+            <option value="Shopping">🛍️ Shopping</option>
+            <option value="Healthcare">🏥 Healthcare</option>
+            <option value="Utilities">⚡ Utilities</option>
+            <option value="Other">📋 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="editFormDate" required />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Update Transaction</button>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
