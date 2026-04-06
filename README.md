@@ -1,62 +1,66 @@
-# AURA Finance Dashboard
+# AURA — Finance Dashboard
 
-A clean, interactive finance dashboard built with vanilla HTML, CSS, and JavaScript.
+Built this as a personal finance tracker to understand where money goes. It's a frontend-only project — no backend, no install, just open and use.
 
-## Setup
 
-```bash
-# No build step required — just open in browser
-open index.html
+## What's inside
+
+**Dashboard**
+- Balance, Income, Expenses and Savings Rate cards at the top
+- Numbers count up smoothly every time something changes
+- A small strip below showing your top spending category, how this month compares to last, and a tip based on your data
+
+**Charts**
+- Line chart tracking balance, income and expenses across months
+- Donut chart showing spending split by category
+- Both are interactive, animated and switch colors with the theme
+
+**Transactions**
+- Full list with date, description, category, type and amount
+- Search works across name and category at the same time
+- Filter by income or expense, filter by category, sort by date or amount
+- Everything filters together live — no reloads
+
+**Roles**
+- Admin can add, edit and delete transactions
+- Viewer gets read-only access — all action buttons disappear
+- Switch between them from the sidebar instantly
+
+**Insights**
+- Monthly income vs expenses bar chart
+- Category breakdown with fill bars showing percentage of total
+- Observation cards that pull actual numbers — savings rate, spending direction, biggest transaction, etc.
+
+---
+
+## Extra stuff
+
+- Dark and light mode, saved to localStorage
+- All transactions persist across page refreshes
+- One-click CSV export
+- Animated background, floating particles, modal transitions
+- Escape key closes any open modal
+
+---
+
+## Tech
+
+- HTML, CSS, vanilla JS — no framework, no build step
+- Chart.js from CDN for the charts
+- Google Fonts — Syne for headings, Plus Jakarta Sans for body, JetBrains Mono for numbers
+
+---
+
+## Files
+
+```
+index.html  — layout, sections, modals
+style.css   — themes, animations, all visual stuff
+app.js      — state, logic, rendering, charts
 ```
 
-Or serve with any static server:
-```bash
-npx serve .
-```
+---
 
-## Features
+## Why vanilla JS
 
-### Core
-| Feature | Details |
-|---|---|
-| **Dashboard Overview** | Summary cards (Balance, Income, Expenses, Savings Rate) with count-up animation |
-| **Time Visualization** | Multi-line chart (Balance Trend, Income, Expenses by month) |
-| **Category Visualization** | Donut chart of spending breakdown by category |
-| **Transactions Section** | Full table with search, type filter, category filter, sort |
-| **Role-Based UI** | Admin (CRUD access) / Viewer (read-only) toggle |
-| **Insights Section** | Monthly bar chart, category breakdown bars, 6 observation cards |
-| **State Management** | Vanilla JS state object + localStorage persistence |
-
-### Optional Enhancements
-- 🌙 **Dark / Light mode** toggle with theme persistence
-- 💾 **Data persistence** via `localStorage`
-- 📤 **CSV export** of all transactions
-- ✨ **Animations**: aurora background, floating particles, card slide-ins, count-up numbers, modal bounce, chart transitions
-- 🔍 **Advanced filtering**: search + type + category + sort combined
-
-## Tech Stack
-- **HTML5** — semantic markup
-- **CSS3** — custom properties, glassmorphism, keyframe animations
-- **JavaScript (ES2020)** — vanilla, no frameworks
-- **Chart.js** (CDN) — line, donut, bar charts
-- **Google Fonts**: Syne (headings), Plus Jakarta Sans (body), JetBrains Mono (numbers)
-
-## Structure
-```
-finance/
-├── index.html   # App shell + modals
-├── style.css    # All styles
-├── app.js       # All logic
-└── README.md
-```
-
-## Role Behavior
-| Action | Admin | Viewer |
-|---|---|---|
-| View dashboard | ✅ | ✅ |
-| View transactions | ✅ | ✅ |
-| View insights | ✅ | ✅ |
-| Add transaction | ✅ | ❌ |
-| Edit transaction | ✅ | ❌ |
-| Delete transaction | ✅ | ❌ |
-| Export CSV | ✅ | ✅ |
+Frameworks are great but I wanted to show the thinking behind state management without hiding it behind abstractions. There's one `state` object, one `renderAll()` call, and everything stays in sync. It's easier to follow and easier to explain.
